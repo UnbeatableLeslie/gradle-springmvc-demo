@@ -1,0 +1,65 @@
+apply plugin: 'idea'
+apply plugin: 'war' // 引入war插件, 它默认包含java插件
+apply plugin: 'com.bmuschko.tomcat' //tomcat: 插件
+
+
+group 'com.pengheng'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+// tomcat: 以下配置会在第一次启动时下载插件二进制文件
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+    }
+}
+
+// 配置阿里源
+allprojects {
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    providedCompile group: 'javax.servlet', name: 'jsp-api', version: '2.0'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    compile group: 'jstl', name: 'jstl', version: '1.2'
+    compile group: 'taglibs', name: 'standard', version: '1.1.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.0'
+    compile group: 'org.mybatis', name: 'mybatis', version: '3.4.5'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.1.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-test', version: '5.1.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '5.1.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-tx', version: '5.1.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-aop', version: '5.1.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.12.RELEASE'
+    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
+    compile group: 'org.mybatis', name: 'mybatis-spring', version: '2.0.3'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.46'
+    compile group: 'com.alibaba', name: 'druid', version: '1.1.21'
+
+    // tomcat: 将Tomcat运行时库添加到配置tomcat中: (此处为Tomcat9)
+    def tomcatVersion = '9.0.1'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+}
+
+// tomcat: 一些协议设置（注意，这里必须加上，不然会抛tomcat的异常，仅限tomcat9）
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol = 'org.apache.coyote.ajp.AjpNio2Protocol'
+    contextPath = '/'
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'SpringMVC-demo'
+include 'ssm'
+include 'demo'
+
